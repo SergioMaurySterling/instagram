@@ -58,7 +58,7 @@ export default function Header() {
             <div className='absolute -top-2 -right-2
             text-xs w-5 h-5 bg-red-500 rounded-full flex
             items-center justify-center text-white font-bold
-            animate-pulse'>3</div>
+            animate-bounce'>3</div>
           </div>
           <PlusCircleIcon className='navBtn'/>
           <UserGroupIcon className='navBtn'/>
