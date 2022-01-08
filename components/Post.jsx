@@ -7,7 +7,7 @@ import {
   PaperAirplaneIcon
 } from '@heroicons/react/outline'
 import { HeartIcon as HeartIconFilled } from '@heroicons/react/solid'
-import { addDoc, collection, serverTimestamp, updateDoc, doc, onSnapshot, query, orderBy, setDoc } from 'firebase/firestore'
+import { addDoc, collection, serverTimestamp, updateDoc, doc, onSnapshot, query, orderBy, setDoc, deleteDoc } from 'firebase/firestore'
 import { db, storage } from '../firebase';
 import { signIn, useSession, signOut } from 'next-auth/react'
 import { useEffect, useState } from 'react'
@@ -20,6 +20,7 @@ export default function Post({ id, username, userImg, img, caption }) {
   const [comment, setComment] = useState('')
   const [comments, setComments] = useState([])
   const [likes, setLikes] = useState([])
+  const [hasLiked, setHasLiked] = useState(false)
 
   useEffect(
     () =>
@@ -37,10 +38,19 @@ export default function Post({ id, username, userImg, img, caption }) {
     (snapshot) => setLikes(snapshot.docs))
   ,[db, id])
 
+  //quitar y poner like
+  useEffect(() => {
+    setHasLiked(likes.findIndex((like)=>like.id === session?.user?.uid) !== -1)
+  }, [likes])
+
   const likePost = async() => {
-    await setDoc(doc(db, 'posts', id, 'likes', session.user.uid), {
-      username: session.user.username,
-    })
+    if(hasLiked) {
+      await deleteDoc(doc(db, 'posts', id, 'likes', session.user.uid))
+    }else {
+      await setDoc(doc(db, 'posts', id, 'likes', session.user.uid), {
+        username: session.user.username,
+      })
+    }
   }
 
   const sendComment = async(e) => {
@@ -72,7 +82,11 @@ export default function Post({ id, username, userImg, img, caption }) {
       {session && (
         <div className='flex justify-between px-4 pt-4'>
           <div className='flex space-x-4'>
-            <HeartIcon onClick={likePost} className='btn'/>
+            {hasLiked ? (
+              <HeartIconFilled onClick={likePost} className='btn text-red-500'/>
+            ) : (
+              <HeartIcon onClick={likePost} className='btn'/>
+            )}
             <ChatIcon className='btn'/>
             <PaperAirplaneIcon className='btn'/>
           </div>
@@ -83,6 +97,7 @@ export default function Post({ id, username, userImg, img, caption }) {
       {/* Caption */}
       <div>
         <p className='p-5 truncate'>
+          {likes.length > 0 && (<p className='font-bold mb-1'>{likes.length} likes</p>)}
           <span className='font-bold mr-1'>{username}</span>
           {caption}
         </p>
