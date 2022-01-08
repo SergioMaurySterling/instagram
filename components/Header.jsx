@@ -8,8 +8,12 @@ import {
   MenuIcon,
 } from '@heroicons/react/outline'
 import { HomeIcon } from '@heroicons/react/solid'
+import { signIn, useSession, signOut } from 'next-auth/react';
 
 export default function Header() {
+
+  const { data:session }  = useSession();
+
   return (
     <div className='shadow-sm border-b bg-white pb-2
     sticky top-0 z-50'>
@@ -53,20 +57,26 @@ export default function Header() {
           <MenuIcon className='cursor-pointer w-6 h-6
             md:hidden'/>
           <HomeIcon className='navBtn'/>
-          <div className='relative navBtn'>
-            <PaperAirplaneIcon className='navBtn rotate-45'/>
-            <div className='absolute -top-2 -right-2
-            text-xs w-5 h-5 bg-red-500 rounded-full flex
-            items-center justify-center text-white font-bold
-            animate-bounce'>3</div>
-          </div>
-          <PlusCircleIcon className='navBtn'/>
-          <UserGroupIcon className='navBtn'/>
-          <HeartIcon className='navBtn'/>
-          <img className='h-10 w-10 rounded-full cursor-pointer'
-          src='https://firebasestorage.googleapis.com/v0/b/petti-2d60d.appspot.com/o/images%2F4Pe0SOSeY1RRfkcJceD8OYWK4vc2?alt=media&token=d0347cb6-7474-4544-a8ce-9809e58a8363' alt='Profile picture' />
+          {session?(
+            <>
+              <div className='relative navBtn'>
+              <PaperAirplaneIcon className='navBtn rotate-45'/>
+              <div className='absolute -top-2 -right-2
+              text-xs w-5 h-5 bg-red-500 rounded-full flex
+              items-center justify-center text-white font-bold
+              animate-bounce'>3</div>
+              </div>
+              <PlusCircleIcon className='navBtn'/>
+              <UserGroupIcon className='navBtn'/>
+              <HeartIcon className='navBtn'/>
+              <img onClick={signOut}
+              className='h-10 w-10 rounded-full cursor-pointer'
+              src={session?.user?.image} alt='Profile picture' />
+            </>
+          ): (
+            <button onClick={signIn}>Sign In</button>
+          )}
         </div>
-
       </div>
     </div>
   )
