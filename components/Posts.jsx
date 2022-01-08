@@ -1,46 +1,27 @@
+import { db, storage } from '../firebase';
+import { onSnapshot, query, collection, orderBy } from 'firebase/firestore'
+import { useState, useEffect } from 'react'
 import Post from "./Post"
 
-const posts = [
-  {
-    id: '123',
-    username: 'sergiomaurysterling',
-    userImg: 'https://firebasestorage.googleapis.com/v0/b/petti-2d60d.appspot.com/o/images%2F4Pe0SOSeY1RRfkcJceD8OYWK4vc2?alt=media&token=d0347cb6-7474-4544-a8ce-9809e58a8363',
-    img: 'https://firebasestorage.googleapis.com/v0/b/petti-2d60d.appspot.com/o/images%2F4Pe0SOSeY1RRfkcJceD8OYWK4vc2?alt=media&token=d0347cb6-7474-4544-a8ce-9809e58a8363',
-    caption: 'This is DOPE',
-  },
-  {
-    id: '123',
-    username: 'sergiomaurysterling',
-    userImg: 'https://firebasestorage.googleapis.com/v0/b/petti-2d60d.appspot.com/o/images%2F4Pe0SOSeY1RRfkcJceD8OYWK4vc2?alt=media&token=d0347cb6-7474-4544-a8ce-9809e58a8363',
-    img: 'https://firebasestorage.googleapis.com/v0/b/petti-2d60d.appspot.com/o/images%2F4Pe0SOSeY1RRfkcJceD8OYWK4vc2?alt=media&token=d0347cb6-7474-4544-a8ce-9809e58a8363',
-    caption: 'This is DOPE',
-  },
-  {
-    id: '123',
-    username: 'sergiomaurysterling',
-    userImg: 'https://firebasestorage.googleapis.com/v0/b/petti-2d60d.appspot.com/o/images%2F4Pe0SOSeY1RRfkcJceD8OYWK4vc2?alt=media&token=d0347cb6-7474-4544-a8ce-9809e58a8363',
-    img: 'https://firebasestorage.googleapis.com/v0/b/petti-2d60d.appspot.com/o/images%2F4Pe0SOSeY1RRfkcJceD8OYWK4vc2?alt=media&token=d0347cb6-7474-4544-a8ce-9809e58a8363',
-    caption: 'This is DOPE',
-  },
-  {
-    id: '123',
-    username: 'sergiomaurysterling',
-    userImg: 'https://firebasestorage.googleapis.com/v0/b/petti-2d60d.appspot.com/o/images%2F4Pe0SOSeY1RRfkcJceD8OYWK4vc2?alt=media&token=d0347cb6-7474-4544-a8ce-9809e58a8363',
-    img: 'https://firebasestorage.googleapis.com/v0/b/petti-2d60d.appspot.com/o/images%2F4Pe0SOSeY1RRfkcJceD8OYWK4vc2?alt=media&token=d0347cb6-7474-4544-a8ce-9809e58a8363',
-    caption: 'This is DOPE',
-  },
-]
-
 export default function Posts() {
+
+  const [posts, setPosts] = useState([])
+
+  useEffect(
+    () =>
+      onSnapshot(query(collection(db, 'posts'), orderBy('timestamp', 'desc')), snapshot =>{
+      setPosts(snapshot.docs)
+    }),[db])
+
   return (
     <div>
       {posts.map(post => (
         <Post key={post.id}
         id={post.id}
-        username={post.username}
-        userImg={post.userImg}
-        img={post.img}
-        caption={post.caption}
+        username={post.data().username}
+        userImg={post.data().profileImg}
+        img={post.data().image}
+        caption={post.data().caption}
         />
       ))}
     </div>
