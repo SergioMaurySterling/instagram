@@ -59,8 +59,12 @@ export default function Header() {
 
         {/* Right side */}
         <div className="flex items-center justify-end space-x-4">
-          <MenuIcon className='cursor-pointer w-6 h-6
-            md:hidden'/>
+          {/* <MenuIcon className='cursor-pointer w-6 h-6
+            md:hidden'/> */}
+            <PlusCircleIcon onClick={()=>setOpen(true)}
+              className='h-6 md:inline-flex
+    cursor-pointer hover:scale-125
+    transition-all duration-150 ease-out'/>
           <HomeIcon onClick={()=>router.push('/')} className='navBtn'/>
           {session?(
             <>
