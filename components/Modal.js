@@ -139,6 +139,7 @@ function Modal() {
                         className='border-none focus-ring-0 w-full text-center'
                         placeholder='Please add a caption...'
                       />
+                      
                     </div>
                   </div>
                 </div>
